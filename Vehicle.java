@@ -4,7 +4,7 @@ public class Vehicle {
     private String warna;
     
     public enum JenisKendaraan {
-        MOBIL, MOTOR
+        Mobil, Motor
     }
     
     private JenisKendaraan jenisKendaraan;
@@ -60,7 +60,7 @@ public class Vehicle {
     }
 
     public String displayInfo() {
-        return "  ID Kendaraan: " + idKendaraan + "\n" +
+        return "\nID Kendaraan: " + idKendaraan + "\n" +
         "  Jenis Kendaraan: " + jenisKendaraan + "\n" +
         "  Merek: " + merek + "\n" +
         "  Warna: " + warna;

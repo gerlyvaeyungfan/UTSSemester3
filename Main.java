@@ -17,9 +17,14 @@ public class Main {
         // Inisialisasi UserProfile untuk Customer
         UserProfile customer1 = new UserProfile(2, "2", "Dimas Setyo Nugroho", 28, "2@gmail.com", null);
         Customer customer = new Customer(customer1);
+        // Tampilkan profil
+        ArrayList<UserProfile> profiles = new ArrayList<>();
+        profiles.add(admin1); // Tambahkan profil admin
+        profiles.add(customer1); // Tambahkan profil customer
 
-        admin.addKendaraan(1, Vehicle.JenisKendaraan.MOBIL, "Toyota", "Merah"); // Menambahkan kendaraan pertama
-        admin.addKendaraan(2, Vehicle.JenisKendaraan.MOTOR, "Yamaha", "Hitam"); // Menambahkan kendaraan kedua
+
+        admin.addKendaraan(1, Vehicle.JenisKendaraan.Mobil, "Toyota", "Merah"); // Menambahkan kendaraan pertama
+        admin.addKendaraan(2, Vehicle.JenisKendaraan.Motor, "Yamaha", "Hitam"); // Menambahkan kendaraan kedua
 
         // Simulasi login untuk admin dan customer
         Scanner sc = new Scanner(System.in);
@@ -65,11 +70,13 @@ public class Main {
 
                             switch (adminChoice) {
                                 case 1:
+                                    admin.displayVehicles();
                                     // Proses update kendaraan
                                     System.out.print("Masukkan ID Kendaraan yang ingin diperbarui: ");
                                     int updateVehicleId = sc.nextInt();
                                     sc.nextLine();
-                                    System.out.println("Masukkan jenis kendaraan:");
+                                    admin.displayVehicleDetail(updateVehicleId);
+                                    System.out.println("Edit jenis kendaraan:");
                                     System.out.println("1. Mobil");
                                     System.out.println("2. Motor");
                                     System.out.print("Pilih opsi: ");
@@ -79,19 +86,19 @@ public class Main {
                                     Vehicle.JenisKendaraan jenisKendaraanEnumUpdate;
                                     switch (jenisKendaraanUpdate) {
                                         case 1:
-                                            jenisKendaraanEnumUpdate = Vehicle.JenisKendaraan.MOBIL;
+                                            jenisKendaraanEnumUpdate = Vehicle.JenisKendaraan.Mobil;
                                             break;
                                         case 2:
-                                            jenisKendaraanEnumUpdate = Vehicle.JenisKendaraan.MOTOR;
+                                            jenisKendaraanEnumUpdate = Vehicle.JenisKendaraan.Motor;
                                             break;
                                         default:
                                             System.out.println("Jenis kendaraan tidak valid. Harap masukkan '1' untuk Mobil atau '2' untuk Motor.");
                                             continue;
                                     }
 
-                                    System.out.print("Masukkan merek kendaraan: ");
+                                    System.out.print("Edit merek kendaraan: ");
                                     String merekUpdate = sc.nextLine();
-                                    System.out.print("Masukkan warna kendaraan: ");
+                                    System.out.print("Edit warna kendaraan: ");
                                     String warnaUpdate = sc.nextLine();
 
                                     admin.updateDetailKendaraan(updateVehicleId, jenisKendaraanEnumUpdate, merekUpdate, warnaUpdate);
@@ -113,13 +120,13 @@ public class Main {
                                     Vehicle.JenisKendaraan jenisKendaraanEnum;
                                     switch (jenisKendaraanInput) {
                                         case 1:
-                                            jenisKendaraanEnum = Vehicle.JenisKendaraan.MOBIL;
+                                            jenisKendaraanEnum = Vehicle.JenisKendaraan.Mobil;
                                             break;
                                         case 2:
-                                            jenisKendaraanEnum = Vehicle.JenisKendaraan.MOTOR;
+                                            jenisKendaraanEnum = Vehicle.JenisKendaraan.Motor;
                                             break;
                                         default:
-                                            System.out.println("Jenis kendaraan tidak valid. Harap masukkan '1' untuk Mobil atau '2' untuk Motor.");
+                                            System.out.println("Pilihan tidak valid.");
                                             continue;
                                     }
 
@@ -182,11 +189,7 @@ public class Main {
                                     break;
                                 
                                 case 6:
-                                    // Tampilkan profil
-                                    ArrayList<UserProfile> profiles = new ArrayList<>();
-                                    profiles.add(admin1); // Tambahkan profil admin
-                                    profiles.add(customer1); // Tambahkan profil customer
-
+                                    
                                     System.out.println("Daftar ID Pengguna yang tersedia:");
                                     for (UserProfile profile : profiles) {
                                         System.out.println("ID: " + profile.getUserID() + ", Nama: " + profile.getName());
@@ -318,8 +321,9 @@ public class Main {
                         boolean customerMenu = true;
                         while (customerMenu) {
                             System.out.println("\n--- Menu Customer ---");
-                            System.out.println("-/1. Ajukan Keluhan");
+                            System.out.println("-/1. Status Verifikasi");
                             System.out.println("-/2. Verifikasi Dokumen");
+                            System.out.println("-/3. Ajukan Keluhan");
                             System.out.println("-/0. Logout");
                             System.out.print("Pilih opsi: ");
 
@@ -328,16 +332,32 @@ public class Main {
 
                             switch (customerChoice) {
                                 case 1:
+                                        // Cek status verifikasi customer
+                                if (customer.getVerificationStatus()) {
+                                    System.out.println("Status Verifikasi Dokumen: Terverifikasi");
+                                } else {
+                                    System.out.println("Status Verifikasi Dokumen: Belum terverifikasi");
+                            }
+                            break;
+                                case 2:
+                                    // Tambah Dokumen dan Apply Verifikasi
+                                    System.out.print("Masukkan nama dokumen (akhiri dengan .jpg, .png, atau .pdf): ");
+                                    String documentName = sc.nextLine();
+                                    customer.addDocument(documentName);
+                                    
+                                    // Mengajukan verifikasi setelah menambahkan dokumen
+                                    if (customer.applyVerification()) {
+                                        System.out.println("Pengajuan verifikasi berhasil. Tunggu untuk diverifikasi oleh admin.");
+                                    }
+                                    break;
+                            
+                                case 3:
                                     // Proses ajukan keluhan
                                     System.out.print("Masukkan keluhan: ");
                                     String keluhan = sc.nextLine();
                                     customer.submitComplain(keluhan); // Kirim keluhan ke admin
                                     break;
 
-                                case 2:
-                                    // Proses verifikasi dokumen
-                                    customer.applyVerification();
-                                    break;
 
                                 case 0:
                                     customer.logout();
