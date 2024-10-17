@@ -21,7 +21,7 @@ public class Customer extends User {
         this.isPendingVerification = false; // Reset status antrean setelah verifikasi
         System.out.println("Status verifikasi telah diperbarui: " + (status ? "Terverifikasi" : "Belum terverifikasi"));
     }
-
+    
     public void editProfile(String field, String value) {
         switch (field.toLowerCase()) {
             case "name":
@@ -40,7 +40,7 @@ public class Customer extends User {
                 System.out.println("Field tidak valid.");
         }
     }
-    
+
     // Metode untuk mendapatkan dokumen
     public String[] getDocuments() {
         return documents.toArray(new String[0]); // Mengonversi ArrayList menjadi array
