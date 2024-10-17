@@ -1,5 +1,6 @@
 public class User {
     UserProfile userProfile;
+    protected String password;
 
     public User(UserProfile userProfile) {
         this.userProfile = userProfile;

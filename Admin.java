@@ -2,19 +2,51 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Admin extends User {
-
     private ArrayList<Vehicle> vehicles; // List untuk menyimpan kendaraan
     private Scanner sc = new Scanner(System.in);
+    // Tambahkan di class Admin atau di dalam method main():
+    ArrayList<Customer> pendingQueue = new ArrayList<>(); // Antrean verifikasi
 
     public Admin(UserProfile userProfile) {
         super(userProfile);
         this.vehicles = new ArrayList<>(); // Inisialisasi list kendaraan
     }
 
+    // Method untuk menampilkan menu verifikasi dokumen customer
+    public void verifyCustomerDocuments() {
+        System.out.println("Memeriksa antrean verifikasi...");
+        VerificationQueue.verifyNextCustomerInQueue(); // Verifikasi customer berikutnya
+    }
+    
+    // Dalam kelas Admin
+    public void verifyCustomer() {
+        if (VerificationQueue.isEmpty()) {
+            System.out.println("Tidak ada customer yang menunggu verifikasi.");
+            return;
+        }
+
+        // Tampilkan daftar customer yang menunggu verifikasi
+        System.out.println("Daftar customer yang menunggu verifikasi:");
+        for (int i = 0; i < VerificationQueue.getPendingQueueSize(); i++) {
+            Customer customer = VerificationQueue.getPendingCustomer(i);
+            System.out.println((i + 1) + ". ID: " + customer.getUserProfile().getUserID() + ", Nama: " + customer.getUserProfile().getName());
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Pilih customer yang akan diverifikasi: ");
+        int choice = scanner.nextInt() - 1; // Mengurangi 1 untuk indeks
+
+        if (choice >= 0 && choice < VerificationQueue.getPendingQueueSize()) {
+            VerificationQueue.verifyNextCustomerInQueue(); // Memverifikasi customer yang dipilih
+        } else {
+            System.out.println("Pilihan tidak valid.");
+        }
+    }
+
+
     // Method untuk menambahkan kendaraan baru
     public Vehicle addKendaraan(int idKendaraan, Vehicle.JenisKendaraan jenisKendaraan, String merek, String warna) {
         if (findVehicleById(idKendaraan) != null) {
-            System.out.println("Kendaraan dengan ID " + idKendaraan + " sudah ada.");
             return null;
         }
         Vehicle newVehicle = new Vehicle(idKendaraan, jenisKendaraan, merek, warna);
@@ -100,11 +132,9 @@ public class Admin extends User {
     
     // Method untuk mengambil keluhan (complain) dari customer
     public String retrieveComplain(Customer customer) {
-        // Memanggil method retrieveComplain dari customer
         String complain = customer.retrieveComplain();
 
-        // Memeriksa apakah complain adalah null
-        if (complain == null) {
+        if (complain == null || complain.trim().isEmpty()) {
             complain = "Belum ada keluhan dari Customer"; // Mengubah null menjadi pesan yang sesuai
         }
 
@@ -114,7 +144,6 @@ public class Admin extends User {
 
     // Method untuk memverifikasi user
     public boolean verifyUser(Customer customer) {
-        // Memanggil method verifyUser dari customer
         boolean isVerified = customer.verifyUserDocs();
         if (isVerified) {
             System.out.println("User verified by admin.");

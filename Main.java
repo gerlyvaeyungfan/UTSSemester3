@@ -3,17 +3,15 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // Membuat array dokumen awal untuk admin dan customer
         String[] admin1Docs = {"certificate.jpg", "profile.png", "admin_license.pdf"};
-        String[] customer1Docs = {"customer_idCard.jpg", "customer_insurance.pdf"};
-
         // Inisialisasi UserProfile untuk Admin
-        UserProfile admin1 = new UserProfile(1, "1", "Admin User 1", 35, "admin1@example.com", admin1Docs);
+        UserProfile admin1 = new UserProfile(1, "1", "Rahmalia Mutia Farda", 35, "1@gmail.com", admin1Docs);
         Admin admin = new Admin(admin1);
 
         // Inisialisasi UserProfile untuk Customer
-        UserProfile customer1 = new UserProfile(2, "2", "Customer User 1", 28, "customer1@example.com", customer1Docs);
+        UserProfile customer1 = new UserProfile(2, "2", "Dimas Setyo Nugroho", 28, "2@gmail.com", new String[] {});
         Customer customer = new Customer(customer1);
+
         admin.addKendaraan(1, Vehicle.JenisKendaraan.MOBIL, "Toyota", "Merah"); // Menambahkan kendaraan pertama
         admin.addKendaraan(2, Vehicle.JenisKendaraan.MOTOR, "Yamaha", "Hitam"); // Menambahkan kendaraan kedua
 
@@ -60,6 +58,7 @@ public class Main {
 
                             switch (adminChoice) {
                                 case 1:
+                                    // Proses update kendaraan
                                     System.out.print("Masukkan ID Kendaraan yang ingin diperbarui: ");
                                     int updateVehicleId = sc.nextInt();
                                     sc.nextLine();
@@ -80,7 +79,7 @@ public class Main {
                                             break;
                                         default:
                                             System.out.println("Jenis kendaraan tidak valid. Harap masukkan '1' untuk Mobil atau '2' untuk Motor.");
-                                            continue; // Kembali ke awal loop atau lakukan penanganan kesalahan
+                                            continue;
                                     }
 
                                     System.out.print("Masukkan merek kendaraan: ");
@@ -91,20 +90,19 @@ public class Main {
                                     admin.updateDetailKendaraan(updateVehicleId, jenisKendaraanEnumUpdate, merekUpdate, warnaUpdate);
                                     break;
 
-                                    case 2:
+                                case 2:
+                                    // Proses tambah kendaraan
                                     System.out.print("Masukkan ID Kendaraan baru: ");
                                     int newVehicleId = sc.nextInt();
                                     sc.nextLine();
-                                
-                                    // Menampilkan pilihan jenis kendaraan
+
                                     System.out.println("Masukkan jenis kendaraan:");
                                     System.out.println("1. Mobil");
                                     System.out.println("2. Motor");
                                     System.out.print("Pilih opsi: ");
                                     int jenisKendaraanInput = sc.nextInt();
                                     sc.nextLine();
-                                
-                                    // Konversi input string menjadi enum
+
                                     Vehicle.JenisKendaraan jenisKendaraanEnum;
                                     switch (jenisKendaraanInput) {
                                         case 1:
@@ -115,17 +113,16 @@ public class Main {
                                             break;
                                         default:
                                             System.out.println("Jenis kendaraan tidak valid. Harap masukkan '1' untuk Mobil atau '2' untuk Motor.");
-                                            continue; // Kembali ke awal loop atau lakukan penanganan kesalahan
+                                            continue;
                                     }
-                                
+
                                     System.out.print("Masukkan merek kendaraan: ");
                                     String merek = sc.nextLine();
                                     System.out.print("Masukkan warna kendaraan: ");
                                     String warna = sc.nextLine();
-                                
+
                                     admin.addKendaraan(newVehicleId, jenisKendaraanEnum, merek, warna);
                                     break;
-                                
 
                                 case 3: // Tampilkan Kendaraan
                                     admin.displayVehicles(); // Menampilkan daftar kendaraan
@@ -136,56 +133,62 @@ public class Main {
                                     break;
 
                                 case 4:
-                                    // Misalkan kita memiliki customer untuk diambil keluhannya
+                                    // Ambil keluhan dari customer
                                     System.out.println("Ambil keluhan dari customer.");
                                     System.out.println("ID Customer: " + customer1.getUserID());
                                     admin.retrieveComplain(customer);
                                     break;
 
-                                    case 5: // Verifikasi Customer
-                                    System.out.print("Masukkan User ID Customer yang akan diverifikasi: ");
-                                    int customerUserIdForVerification = sc.nextInt();
-                                    sc.nextLine(); // Konsumsi newline
+                                case 5: // Verifikasi Customer
+                                    if (!VerificationQueue.isEmpty()) {
+                                        System.out.println("Daftar customer yang menunggu verifikasi:");
+                                        for (int i = 0; i < VerificationQueue.getPendingQueueSize(); i++) {
+                                            Customer c = VerificationQueue.getPendingCustomer(i);
+                                            System.out.println((i + 1) + ". ID: " + c.getUserProfile().getUserID() + ", Nama: " + c.getUserProfile().getName());
+                                        }
+                                        System.out.print("Pilih customer yang akan diverifikasi: ");
+                                        int selectedIndex = sc.nextInt() - 1; // Mengurangi 1 untuk mendapatkan indeks yang benar
+                                        sc.nextLine();
                                 
-                                    // Cek apakah ID yang dimasukkan sesuai dengan Customer yang ada
-                                    if (customerUserIdForVerification == customer.getUserProfile().getUserID()) {
-                                        // Verifikasi Customer jika belum terverifikasi
-                                        if (!customer.getVerificationStatus()) {
-                                            if (customer.verifyUserDocs()) {
-                                                // Tambahkan dokumen ke UserProfile setelah verifikasi berhasil
-                                                for (String doc : customer.getDocuments()) {
-                                                    customer.getUserProfile().addVerifiedDocument(doc); // Menambahkan dokumen yang diverifikasi
+                                        if (selectedIndex >= 0 && selectedIndex < VerificationQueue.getPendingQueueSize()) {
+                                            Customer selectedCustomer = VerificationQueue.getPendingCustomer(selectedIndex);
+                                            if (!selectedCustomer.getVerificationStatus()) {
+                                                if (selectedCustomer.verifyUserDocs()) {
+                                                    for (String doc : selectedCustomer.getDocuments()) {
+                                                        selectedCustomer.getUserProfile().addVerifiedDocument(doc); // Tambah dokumen yang terverifikasi
+                                                    }
+                                                    selectedCustomer.updateVerificationStatus(true); // Update status verifikasi
+                                                    VerificationQueue.removePendingCustomer(selectedCustomer); // Hapus dari antrean
+                                                    System.out.println("Customer berhasil diverifikasi.");
+                                                } else {
+                                                    System.out.println("User verification failed. No documents provided.");
                                                 }
-                                                admin.verifyUser(customer);  // Verifikasi jika dokumen valid
-                                                System.out.println("Customer dengan ID " + customerUserIdForVerification + " berhasil diverifikasi.");
+                                            } else {
+                                                System.out.println("Customer sudah terverifikasi.");
                                             }
                                         } else {
-                                            System.out.println("Customer dengan ID " + customerUserIdForVerification + " sudah terverifikasi.");
+                                            System.out.println("Pilihan tidak valid.");
                                         }
                                     } else {
-                                        System.out.println("Customer dengan ID " + customerUserIdForVerification + " tidak ditemukan.");
+                                        System.out.println("Tidak ada customer yang menunggu verifikasi.");
                                     }
                                     break;
                                 
-
-                                    
                                 case 6:
+                                    // Tampilkan profil
                                     ArrayList<UserProfile> profiles = new ArrayList<>();
                                     profiles.add(admin1); // Tambahkan profil admin
                                     profiles.add(customer1); // Tambahkan profil customer
 
-                                    // Menampilkan daftar ID pengguna yang ada
                                     System.out.println("Daftar ID Pengguna yang tersedia:");
                                     for (UserProfile profile : profiles) {
                                         System.out.println("ID: " + profile.getUserID() + ", Nama: " + profile.getName());
                                     }
-                                    
-                                    // Input ID profil yang ingin ditampilkan
+
                                     System.out.print("Masukkan ID profil yang ingin ditampilkan: ");
                                     int inputUserId = sc.nextInt();
                                     sc.nextLine(); // Konsumsi newline
-                                    
-                                    // Mencari profil berdasarkan ID
+
                                     boolean found = false;
                                     for (UserProfile profile : profiles) {
                                         if (profile.getUserID() == inputUserId) {
@@ -195,8 +198,7 @@ public class Main {
                                             break;
                                         }
                                     }
-                                    
-                                    // Jika tidak ditemukan
+
                                     if (!found) {
                                         System.out.println("Profil dengan ID " + inputUserId + " tidak ditemukan.");
                                     }
@@ -228,35 +230,35 @@ public class Main {
                         boolean customerMenu = true;
                         while (customerMenu) {
                             System.out.println("\n--- Menu Customer ---");
-                            System.out.println("1. Apply dokumen");
-                            System.out.println("2. Kirim Keluhan");
-                            System.out.println("3. Recovery Password");
+                            System.out.println("1. Apply Verifikasi Dokumen");
+                            System.out.println("2. Tampilkan Profil");
                             System.out.println("0. Logout");
                             System.out.print("Pilih opsi: ");
-
                             int customerChoice = sc.nextInt();
                             sc.nextLine(); // Konsumsi newline
 
                             switch (customerChoice) {
-                                case 1: // Apply dokumen untuk diverifikasi
-                                    System.out.print("Masukkan nama file dokumen yang ingin diajukan untuk verifikasi (misal: dokumen.jpg): ");
+                                case 1:
+                                    // Tambah Dokumen dan Apply Verifikasi
+                                    System.out.print("Masukkan nama dokumen (akhiri dengan .jpg, .png, atau .pdf): ");
                                     String documentName = sc.nextLine();
-                                    // Memasukkan dokumen ke Customer
-                                    customer.addDocument(documentName); // Sekarang metode ini sudah didefinisikan
+                                    customer.addDocument(documentName);
+                                    
+                                    // Mengajukan verifikasi setelah menambahkan dokumen
+                                    if (customer.applyVerification()) {
+                                        System.out.println("Pengajuan verifikasi berhasil. Tunggu untuk diverifikasi oleh admin.");
+                                    }
+                                    break;
+                                case 2:
+                                    // Tampilkan Profil
+                                    System.out.println("Profil Customer: " + customer.getUserProfile().toString());
                                     break;
 
-                                case 2:
-                                    System.out.print("Masukkan keluhan: ");
-                                    String complain = sc.nextLine();
-                                    customer.submitComplain(complain);
-                                    break;
-                                case 3:
-                                    customer.recoverPassword();
-                                    break;
                                 case 0:
                                     customer.logout();
                                     customerMenu = false;
                                     break;
+
                                 default:
                                     System.out.println("Pilihan tidak valid. Silakan coba lagi.");
                             }
@@ -265,8 +267,6 @@ public class Main {
                     break;
 
                 case 0:
-                    // Keluar
-                    System.out.println("Terima kasih! Keluar dari aplikasi.");
                     loginMenu = false;
                     break;
 

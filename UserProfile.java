@@ -7,7 +7,6 @@ public class UserProfile {
     private String name;
     private int age;
     private String email;
-    private String[] doc; // Array untuk menyimpan file doc, jpg, png, pdf yang diajukan
     private String[] verifiedDocs; // Array untuk menyimpan dokumen yang terverifikasi
     private boolean verificationStatus;
 
@@ -32,9 +31,9 @@ public class UserProfile {
     }
 
     public boolean verifyUserDocs() {
-        if (validateDocuments(doc)) {
+        if (validateDocuments(verifiedDocs)) {
             setVerificationStatus(true); // Set status verifikasi menjadi true
-            for (String document : doc) {
+            for (String document : verifiedDocs) {
                 addVerifiedDocument(document); // Tambahkan dokumen satu per satu
             }
             return true;
@@ -72,7 +71,7 @@ public class UserProfile {
     }
 
     public String[] getDoc() {
-        return doc;
+        return verifiedDocs;
     }
 
     public String[] getVerifiedDocs() {
@@ -99,11 +98,11 @@ public class UserProfile {
         this.email = email;
     }
 
-    public void setDocuments(String[] doc) {
-        if (validateDocuments(doc)) {
-            this.doc = doc;
+    public void setDocuments(String[] verifiedDocs) {
+        if (validateDocuments(verifiedDocs)) {
+            this.verifiedDocs = verifiedDocs;
         } else {
-            this.doc = new String[0]; // Set dokumen kosong jika tidak valid
+            this.verifiedDocs = new String[0]; // Set dokumen kosong jika tidak valid
         }
     }
 
@@ -211,7 +210,6 @@ public class UserProfile {
                 "  Name: '" + name + "'\n" +
                 "  Age: " + age + "\n" +
                 "  Email: '" + email + "'\n" +
-                "  Documents: " + Arrays.toString(doc) + "\n" +
                 "  Verified Documents: " + Arrays.toString(verifiedDocs); // Menampilkan dokumen yang terverifikasi
     }
 }
