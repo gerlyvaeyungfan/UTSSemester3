@@ -47,7 +47,6 @@ public class UserProfile {
         // Menambah dokumen terverifikasi ke dalam array verifiedDocs
         verifiedDocs = Arrays.copyOf(verifiedDocs, verifiedDocs.length + 1); // Tambah ukuran array
         verifiedDocs[verifiedDocs.length - 1] = document; // Tambahkan dokumen baru
-        System.out.println("Dokumen terverifikasi '" + document + "' berhasil ditambahkan.");
     }
 
     public int getUserID() {
@@ -130,86 +129,13 @@ public class UserProfile {
         return ""; // Tidak ada ekstensi
     }
 
-    // Method untuk mengedit profil dengan switch case
-    public void editProfile() {
-        Scanner sc = new Scanner(System.in);
-        boolean continueEditing = true;
-
-        while (continueEditing) {
-            System.out.println("\nPilih atribut yang ingin diedit:");
-            System.out.println("1. User ID");
-            System.out.println("2. Password");
-            System.out.println("3. Nama");
-            System.out.println("4. Umur");
-            System.out.println("5. Email");
-            System.out.println("6. Dokumen");
-            System.out.println("7. Selesai");
-
-            int choice = sc.nextInt();
-            sc.nextLine(); // Konsumsi newline
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Masukkan User ID baru: ");
-                    int newUserId = sc.nextInt();
-                    sc.nextLine();
-                    setUserId(newUserId);
-                    System.out.println("User ID berhasil diperbarui.");
-                    break;
-                case 2:
-                    System.out.print("Masukkan Password baru: ");
-                    String newPassword = sc.nextLine();
-                    setPassword(newPassword);
-                    System.out.println("Password berhasil diperbarui.");
-                    break;
-                case 3:
-                    System.out.print("Masukkan Nama baru: ");
-                    String newName = sc.nextLine();
-                    setName(newName);
-                    System.out.println("Nama berhasil diperbarui.");
-                    break;
-                case 4:
-                    System.out.print("Masukkan Umur baru: ");
-                    int newAge = sc.nextInt();
-                    sc.nextLine();
-                    setAge(newAge);
-                    System.out.println("Umur berhasil diperbarui.");
-                    break;
-                case 5:
-                    System.out.print("Masukkan Email baru: ");
-                    String newEmail = sc.nextLine();
-                    setEmail(newEmail);
-                    System.out.println("Email berhasil diperbarui.");
-                    break;
-                case 6:
-                    System.out.print("Masukkan jumlah dokumen baru: ");
-                    int docCount = sc.nextInt();
-                    sc.nextLine();
-                    String[] newDocs = new String[docCount];
-                    for (int i = 0; i < docCount; i++) {
-                        System.out.print("Masukkan dokumen ke-" + (i + 1) + ": ");
-                        newDocs[i] = sc.nextLine();
-                    }
-                    setDocuments(newDocs);
-                    break;
-                case 7:
-                    continueEditing = false;
-                    System.out.println("Profil berhasil diperbarui.");
-                    break;
-                default:
-                    System.out.println("Pilihan tidak valid. Silakan coba lagi.");
-            }
-        }
-        sc.close();
-    }
-
-    public String displayInfo() {
+    public String toString() {
         return "UserProfile\n" +
-                "  User ID: " + userId + "\n" +
-                "  Password: '" + password + "'\n" +
-                "  Name: '" + name + "'\n" +
-                "  Age: " + age + "\n" +
-                "  Email: '" + email + "'\n" +
-                "  Verified Documents: " + Arrays.toString(verifiedDocs); // Menampilkan dokumen yang terverifikasi
+            "  User ID: " + userId + "\n" +
+            "  Password: '" + password + "'\n" +
+            "  Name: '" + name + "'\n" +
+            "  Age: " + age + "\n" +
+            "  Email: '" + email + "'\n" +
+            "  Verified Documents: " + Arrays.toString(verifiedDocs);
     }
 }

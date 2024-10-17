@@ -8,8 +8,14 @@ public class Main {
         UserProfile admin1 = new UserProfile(1, "1", "Rahmalia Mutia Farda", 35, "1@gmail.com", admin1Docs);
         Admin admin = new Admin(admin1);
 
+        // Verifikasi dokumen admin saat program dijalankan
+        for (String doc : admin1Docs) {
+            admin.getUserProfile().addVerifiedDocument(doc); // Menambahkan dokumen terverifikasi
+        }
+        admin.updateVerificationStatus(true); // Mengupdate status verifikasi admin
+
         // Inisialisasi UserProfile untuk Customer
-        UserProfile customer1 = new UserProfile(2, "2", "Dimas Setyo Nugroho", 28, "2@gmail.com", new String[] {});
+        UserProfile customer1 = new UserProfile(2, "2", "Dimas Setyo Nugroho", 28, "2@gmail.com", null);
         Customer customer = new Customer(customer1);
 
         admin.addKendaraan(1, Vehicle.JenisKendaraan.MOBIL, "Toyota", "Merah"); // Menambahkan kendaraan pertama
@@ -22,9 +28,9 @@ public class Main {
         boolean loginMenu = true;
         while (loginMenu) {
             System.out.println("\n--- Pilih Login ---");
-            System.out.println("1. Login sebagai Admin");
-            System.out.println("2. Login sebagai Customer");
-            System.out.println("0. Keluar");
+            System.out.println("-/1. Login sebagai Admin");
+            System.out.println("-/2. Login sebagai Customer");
+            System.out.println("-/0. Keluar");
             System.out.print("Pilih opsi: ");
             int choice = sc.nextInt();
             sc.nextLine(); // Konsumsi newline
@@ -44,13 +50,14 @@ public class Main {
                         boolean adminMenu = true;
                         while (adminMenu) {
                             System.out.println("\n--- Menu Admin ---");
-                            System.out.println("1. Update Detail Kendaraan");
-                            System.out.println("2. Tambah Kendaraan");
-                            System.out.println("3. Tampilkan Kendaraan");
-                            System.out.println("4. Ambil Keluhan dari Customer");
-                            System.out.println("5. Verifikasi Customer");
-                            System.out.println("6. Tampilkan Profil");
-                            System.out.println("0. Logout");
+                            System.out.println("-/1. Update Detail Kendaraan");
+                            System.out.println("-/2. Tambah Kendaraan");
+                            System.out.println("-/3. Tampilkan Kendaraan");
+                            System.out.println("-/4. Ambil Keluhan dari Customer");
+                            System.out.println("-/5. Verifikasi Customer");
+                            System.out.println("-/6. Tampilkan Profil");
+                            System.out.println("-/7. Edit Profil");
+                            System.out.println("-/0. Logout");
                             System.out.print("Pilih opsi: ");
 
                             int adminChoice = sc.nextInt();
@@ -193,7 +200,7 @@ public class Main {
                                     for (UserProfile profile : profiles) {
                                         if (profile.getUserID() == inputUserId) {
                                             System.out.println("\nProfil Ditemukan:");
-                                            System.out.println(profile.displayInfo()); // Menampilkan detail profil
+                                            System.out.println(profile.toString()); // Menampilkan detail profil
                                             found = true;
                                             break;
                                         }
@@ -203,7 +210,88 @@ public class Main {
                                         System.out.println("Profil dengan ID " + inputUserId + " tidak ditemukan.");
                                     }
                                     break;
+                                
+                                    case 7: // Edit Profil
+                                    System.out.println("--- Edit Profil ---");
+                                    System.out.println("-/1. Edit Profil Admin");
+                                    System.out.println("-/2. Edit Profil Customer");
+                                    System.out.print("Pilih opsi: ");
+                                    int editOption = sc.nextInt();
+                                    sc.nextLine(); // Konsumsi newline
 
+                                    if (editOption == 1) {
+                                        // Edit Profil Admin
+                                        System.out.println("--- Edit Profil Admin ---");
+                                        System.out.println("-/1. Ubah Nama");
+                                        System.out.println("-/2. Ubah Usia");
+                                        System.out.println("-/3. Ubah Email");
+                                        System.out.print("Pilih data yang ingin diedit: ");
+                                        int editChoice = sc.nextInt();
+                                        sc.nextLine(); // Konsumsi newline
+
+                                        switch (editChoice) {
+                                            case 1:
+                                                System.out.print("Masukkan nama baru: ");
+                                                String newName = sc.nextLine();
+                                                admin.editProfile("name", newName);
+                                                break;
+                                            case 2:
+                                                System.out.print("Masukkan usia baru: ");
+                                                int newAge = sc.nextInt();
+                                                sc.nextLine();
+                                                admin.editProfile("age", String.valueOf(newAge));
+                                                break;
+                                            case 3:
+                                                System.out.print("Masukkan email baru: ");
+                                                String newEmail = sc.nextLine();
+                                                admin.editProfile("email", newEmail);
+                                                break;
+                                            default:
+                                                System.out.println("Pilihan tidak valid.");
+                                        }
+                                    } else if (editOption == 2) {
+                                        // Edit Profil Customer
+                                        System.out.println("--- Edit Profil Customer ---");
+                                        System.out.print("Masukkan ID Customer yang ingin diedit: ");
+                                        int customerIdToEdit = sc.nextInt();
+                                        sc.nextLine(); // Konsumsi newline
+
+                                        // Menggunakan contoh customer statis. 
+                                        if (customer1.getUserID() == customerIdToEdit) {
+                                            System.out.println("-/1. Ubah Nama");
+                                            System.out.println("-/2. Ubah Usia");
+                                            System.out.println("-/3. Ubah Email");
+                                            System.out.print("Pilih data yang ingin diedit: ");
+                                            int editCustomerChoice = sc.nextInt();
+                                            sc.nextLine(); // Konsumsi newline
+
+                                            switch (editCustomerChoice) {
+                                                case 1:
+                                                    System.out.print("Masukkan nama baru: ");
+                                                    String newCustomerName = sc.nextLine();
+                                                    customer.editProfile("name", newCustomerName);
+                                                    break;
+                                                case 2:
+                                                    System.out.print("Masukkan usia baru: ");
+                                                    int newCustomerAge = sc.nextInt();
+                                                    sc.nextLine();
+                                                    customer.editProfile("age", String.valueOf(newCustomerAge));
+                                                    break;
+                                                case 3:
+                                                    System.out.print("Masukkan email baru: ");
+                                                    String newCustomerEmail = sc.nextLine();
+                                                    customer.editProfile("email", newCustomerEmail);
+                                                    break;
+                                                default:
+                                                    System.out.println("Pilihan tidak valid.");
+                                            }
+                                        } else {
+                                            System.out.println("Customer dengan ID " + customerIdToEdit + " tidak ditemukan.");
+                                        }
+                                    } else {
+                                        System.out.println("Pilihan tidak valid.");
+                                    }
+                                    break;
                                 case 0:
                                     admin.logout();
                                     adminMenu = false;
@@ -230,28 +318,25 @@ public class Main {
                         boolean customerMenu = true;
                         while (customerMenu) {
                             System.out.println("\n--- Menu Customer ---");
-                            System.out.println("1. Apply Verifikasi Dokumen");
-                            System.out.println("2. Tampilkan Profil");
-                            System.out.println("0. Logout");
+                            System.out.println("-/1. Ajukan Keluhan");
+                            System.out.println("-/2. Verifikasi Dokumen");
+                            System.out.println("-/0. Logout");
                             System.out.print("Pilih opsi: ");
+
                             int customerChoice = sc.nextInt();
                             sc.nextLine(); // Konsumsi newline
 
                             switch (customerChoice) {
                                 case 1:
-                                    // Tambah Dokumen dan Apply Verifikasi
-                                    System.out.print("Masukkan nama dokumen (akhiri dengan .jpg, .png, atau .pdf): ");
-                                    String documentName = sc.nextLine();
-                                    customer.addDocument(documentName);
-                                    
-                                    // Mengajukan verifikasi setelah menambahkan dokumen
-                                    if (customer.applyVerification()) {
-                                        System.out.println("Pengajuan verifikasi berhasil. Tunggu untuk diverifikasi oleh admin.");
-                                    }
+                                    // Proses ajukan keluhan
+                                    System.out.print("Masukkan keluhan: ");
+                                    String keluhan = sc.nextLine();
+                                    customer.submitComplain(keluhan); // Kirim keluhan ke admin
                                     break;
+
                                 case 2:
-                                    // Tampilkan Profil
-                                    System.out.println("Profil Customer: " + customer.getUserProfile().toString());
+                                    // Proses verifikasi dokumen
+                                    customer.applyVerification();
                                     break;
 
                                 case 0:
@@ -267,6 +352,7 @@ public class Main {
                     break;
 
                 case 0:
+                    System.out.println("Terima kasih! Program dihentikan.");
                     loginMenu = false;
                     break;
 
@@ -274,7 +360,6 @@ public class Main {
                     System.out.println("Pilihan tidak valid. Silakan coba lagi.");
             }
         }
-
-        sc.close();
+        sc.close(); // Menutup scanner
     }
 }

@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class Customer extends User {
     private String complain; // Atribut untuk menyimpan keluhan dari customer
@@ -24,6 +22,25 @@ public class Customer extends User {
         System.out.println("Status verifikasi telah diperbarui: " + (status ? "Terverifikasi" : "Belum terverifikasi"));
     }
 
+    public void editProfile(String field, String value) {
+        switch (field.toLowerCase()) {
+            case "name":
+                getUserProfile().setName(value);
+                System.out.println("Nama berhasil diperbarui menjadi: " + value);
+                break;
+            case "age":
+                getUserProfile().setAge(Integer.parseInt(value));
+                System.out.println("Usia berhasil diperbarui menjadi: " + value);
+                break;
+            case "email":
+                getUserProfile().setEmail(value);
+                System.out.println("Email berhasil diperbarui menjadi: " + value);
+                break;
+            default:
+                System.out.println("Field tidak valid.");
+        }
+    }
+    
     // Metode untuk mendapatkan dokumen
     public String[] getDocuments() {
         return documents.toArray(new String[0]); // Mengonversi ArrayList menjadi array
@@ -144,12 +161,16 @@ public class Customer extends User {
     }
 }
 class VerificationQueue {
-    private static Queue<Customer> pendingQueue = new LinkedList<>();
+    private static ArrayList <Customer> pendingQueue = new ArrayList<>();
 
     // Method untuk menambahkan customer ke antrean
     public static void addPendingVerification(Customer customer) {
         pendingQueue.add(customer);
         System.out.println("Customer ID: " + customer.getUserProfile().getUserID() + " telah ditambahkan ke antrean verifikasi.");
+    }
+
+    public ArrayList<Customer> getPendingQueue() {
+        return pendingQueue;  // Mengembalikan daftar antrean
     }
 
     // Method untuk memeriksa apakah antrean kosong
@@ -178,12 +199,13 @@ class VerificationQueue {
     // Method untuk mengambil dan memverifikasi dokumen customer
     public static void verifyNextCustomerInQueue() {
         if (!pendingQueue.isEmpty()) {
-            Customer customer = pendingQueue.poll(); // Ambil customer dari antrean
+            Customer customer = pendingQueue.remove(0); // Ambil dan hapus customer pertama di antrean
             System.out.println("Memverifikasi dokumen Customer ID: " + customer.getUserProfile().getUserID());
+    
             // Lakukan verifikasi dokumen (validasi manual oleh admin)
             boolean isValid = customer.verifyUserDocs(); // Memverifikasi dokumen
             customer.updateVerificationStatus(isValid); // Update status verifikasi
-
+    
             if (isValid) {
                 System.out.println("Dokumen Customer ID: " + customer.getUserProfile().getUserID() + " telah berhasil diverifikasi.");
             } else {
@@ -193,4 +215,5 @@ class VerificationQueue {
             System.out.println("Tidak ada antrean verifikasi yang tersisa.");
         }
     }
+    
 }

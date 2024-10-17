@@ -6,10 +6,35 @@ public class Admin extends User {
     private Scanner sc = new Scanner(System.in);
     // Tambahkan di class Admin atau di dalam method main():
     ArrayList<Customer> pendingQueue = new ArrayList<>(); // Antrean verifikasi
+    private boolean verificationStatus = false;
 
     public Admin(UserProfile userProfile) {
         super(userProfile);
         this.vehicles = new ArrayList<>(); // Inisialisasi list kendaraan
+    }
+
+    public void editProfile(String field, String value) {
+        switch (field.toLowerCase()) {
+            case "name":
+                getUserProfile().setName(value);
+                System.out.println("Nama berhasil diperbarui menjadi: " + value);
+                break;
+            case "age":
+                getUserProfile().setAge(Integer.parseInt(value));
+                System.out.println("Usia berhasil diperbarui menjadi: " + value);
+                break;
+            case "email":
+                getUserProfile().setEmail(value);
+                System.out.println("Email berhasil diperbarui menjadi: " + value);
+                break;
+            default:
+                System.out.println("Field tidak valid.");
+        }
+    }
+
+    public void updateVerificationStatus(boolean status) {
+        // Logika untuk memperbarui status verifikasi
+        this.verificationStatus = status; // Anggap ada variabel verificationStatus di Admin
     }
 
     // Method untuk menampilkan menu verifikasi dokumen customer
@@ -124,12 +149,12 @@ public class Admin extends User {
         }
     
         if (foundProfile != null) {
-            System.out.println(foundProfile.displayInfo());
+            foundProfile.toString();
         } else {
             System.out.println("Profil dengan ID " + profileId + " tidak ditemukan.");
         }
     }
-    
+
     // Method untuk mengambil keluhan (complain) dari customer
     public String retrieveComplain(Customer customer) {
         String complain = customer.retrieveComplain();
@@ -138,7 +163,8 @@ public class Admin extends User {
             complain = "Belum ada keluhan dari Customer"; // Mengubah null menjadi pesan yang sesuai
         }
 
-        System.out.println("Keluhan dari customer: \n- " + complain);
+        System.out.println("Admin menerima keluhan dari Customer ID: " + customer.getUserProfile().getUserID());
+        System.out.println("- " + complain);
         return complain;
     }
 
